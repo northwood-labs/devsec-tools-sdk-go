@@ -1,0 +1,109 @@
+---
+# See https://pre-commit.com for more information
+# See https://pre-commit.com/hooks.html for more hooks
+default_language_version:
+  python: python3.11
+
+default_stages:
+  - pre-commit
+  - pre-push
+
+fail_fast: false
+
+repos:
+  # ----------------------------------------------------------------------------
+  # goplicate-start:always
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.5.0
+    hooks:
+      - id: check-added-large-files
+        args:
+          - --maxkb=1024
+          - --enforce-all
+      - id: check-case-conflict
+      - id: check-merge-conflict
+      - id: check-toml
+      - id: check-xml
+      - id: check-yaml
+        args:
+          - --allow-multiple-documents
+      - id: destroyed-symlinks
+      - id: detect-private-key
+      - id: end-of-file-fixer
+      - id: fix-byte-order-marker
+      - id: mixed-line-ending
+        args:
+          - --fix=lf
+      - id: trailing-whitespace
+
+  - repo: https://github.com/skyzyx/git-hooks
+    rev: 4a2f0dc93e5c5353ed5e619599b0d15e34df88db
+    hooks:
+      - id: git-check
+
+  - repo: https://github.com/igorshubovych/markdownlint-cli
+    rev: v0.39.0
+    hooks:
+      - id: markdownlint
+        args:
+          - --ignore=node_modules
+          - --ignore=.github
+          - --ignore=.templates
+          - --fix
+          - "**/*.md"
+
+  - repo: local
+    hooks:
+      - id: editorconfig-checker
+        name: editorconfig-checker
+        description: Double-check editorconfig compliance
+        entry: bash -c 'editorconfig-checker'
+        language: system
+        stages: [pre-commit, pre-push]
+
+      - id: trufflehog
+        name: TruffleHog
+        description: Detect secrets in your data.
+        entry: bash -c 'trufflehog git file://. --since-commit HEAD --only-verified --fail --json 2>/dev/null | jq "."'
+        language: system
+        stages: [pre-commit, pre-push]
+
+      - id: trivy-vuln
+        name: Trivy (Vulnerabilities)
+        description: Check for security vulnerabilities. (https://trivy.dev)
+        entry: bash -c 'trivy fs --config trivy-vuln.yaml --ignorefile .trivyignore .'
+        language: system
+        stages: [pre-commit, pre-push]
+        # Troubleshooting: https://aquasecurity.github.io/trivy/latest/docs/references/troubleshooting/#denied
+
+      - id: yamlfmt
+        name: yamlfmt
+        description: Format YAML to canonical style
+        entry: |
+          bash -c '(find . -type f -iname "*.yaml" | xargs -I% yamlfmt "%") && \
+            (find . -type f -iname "*.yml" | xargs -I% yamlfmt "%")'
+        language: system
+        stages: [pre-commit, pre-push]
+  # goplicate-end:always
+
+  # ----------------------------------------------------------------------------
+  # goplicate-start:shell
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.5.0
+    hooks:
+      - id: check-executables-have-shebangs
+
+  - repo: https://github.com/skyzyx/git-hooks
+    rev: 4a2f0dc93e5c5353ed5e619599b0d15e34df88db
+    hooks:
+      - id: script-must-have-extension
+      - id: shellcheck
+      - id: shfmt
+        args:
+          - --simplify
+          - --write
+          - --language-dialect=auto
+          - --indent=4
+          - --case-indent
+          - --space-redirects
+        # goplicate-end:shell
