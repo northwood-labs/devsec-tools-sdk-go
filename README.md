@@ -88,7 +88,10 @@ import (
 func main() {
   client := devsectools.NewClient()
 
+  // One or the other...
+  client.SetEndpoint(&devsectools.LOCALDEV)
   client.SetBaseURL("http://localhost:8080")
+
   client.SetTimeout(15 * time.Second)
 
   // ...
@@ -165,7 +168,7 @@ func main() {
   }
 
   // Execute batch requests
-  client.Batch(context.Background(), batchRequests)
+  client.Batch(ctx, batchRequests)
 
   // Print results
   for _, req := range batchRequests {
