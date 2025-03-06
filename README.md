@@ -41,9 +41,6 @@ func main() {
 
 ### Custom configuration
 
-<details>
-<summary>See example…</summary>
-
 ```go
 package main
 
@@ -66,12 +63,7 @@ func main() {
 }
 ```
 
-</details>
-
 ### Updating configuration at runtime
-
-<details>
-<summary>See example…</summary>
 
 ```go
 package main
@@ -98,12 +90,7 @@ func main() {
 }
 ```
 
-</details>
-
 ### Making single requests
-
-<details>
-<summary>See example…</summary>
 
 ```go
 package main
@@ -136,12 +123,7 @@ func main() {
 }
 ```
 
-</details>
-
 ### Making parallel/batch requests
-
-<details>
-<summary>See example…</summary>
 
 ```go
 package main
@@ -162,9 +144,8 @@ func main() {
 
   // Define batch requests
   batchRequests := []devsectools.BatchRequest{
-    {Method: "domain", URL: "example.com", Result: &devsectools.DomainResponse{}},
-    {Method: "http", URL: "example.com", Result: &devsectools.HttpResponse{}},
-    {Method: "tls", URL: "example.com", Result: &devsectools.TlsResponse{}},
+    {Method: "http", URL: "apple.com",  Result: &devsectools.HttpResponse{}},
+    {Method: "tls",  URL: "google.com", Result: &devsectools.TlsResponse{}},
   }
 
   // Execute batch requests
@@ -176,12 +157,11 @@ func main() {
       log.Printf("Error fetching %s: %v\n", req.Method, req.Err)
       continue
     }
+
     fmt.Printf("Result for %s: %+v\n", req.Method, req.Result)
   }
 }
 ```
-
-</details>
 
 [DevSecTools API]: https://devsec.tools
 [Go]: https://go.dev
